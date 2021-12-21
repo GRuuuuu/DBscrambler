@@ -1,0 +1,23 @@
+---
+# convert_info.yml
+db: testdb
+tables:
+    - name: sample_table1
+      object_list:
+          - column: name
+            cvt_option: korean_name
+          - column: phone
+            cvt_option: korean_phone
+          - column: address
+            cvt_option: korean_address
+    - name: sample_table2
+      object_list:
+          - column: name
+            cvt_option: korean_name
+          - column: phone
+            cvt_option: korean_phone
+          - column: rid
+            cvt_option: korean_rid
+          - column: address
+            cvt_option: korean_address
+
