@@ -63,13 +63,11 @@ while True:
             elif a==')' and inQuotes==0 :
                 st+=a;
                 parsed_dump.writelines(st);
+                st='';
                 lineNum+=1;
                 newLine=1;
             elif a==',' and newLine==1:
                 parsed_dump.writelines(a+"\n");
-                if lineNum==43:
-                    print(st);
-                st='';
                 newLine=0;
             elif a=='\'' and inQuotes==0 and isEscape==0:
                 st+=a;
@@ -86,7 +84,7 @@ while True:
                 st+=a;
         end=lineNum;
         yaml_table["end"]=end;
-        parsed_dump.writelines("\n");
+        parsed_dump.writelines(st);
         
     elif line == '':
         # [YAML] save metadata as yaml
