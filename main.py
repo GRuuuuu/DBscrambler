@@ -10,10 +10,12 @@ class DBScramble:
     def __init__(self,
                  dumpfile='test_dump.sql',
                  infofile='convert_info.yml',
-                 outfile='out.sql'):
+                 outfile_scrambled='out_scrambled.sql',
+                 outfile_blank='out_blank.sql'):
         self.state = "none"
         self.dumpfile = dumpfile
-        self.outfile = outfile
+        self.outfile_scrambled = outfile_scrambled
+        self.outfile_blank = outfile_blank
         self.infofile = self.load_yaml(infofile)
         self.dbname = list(self.infofile.keys())[0]
 
@@ -63,19 +65,20 @@ class DBScramble:
         id = yymmdd + '-' + back + str(last)[0]
         return '\'' + id + '\''
 
-    def convert(self, _line, infofile, target_table, table2cols):
+    def convert(self, _line, infofile, target_table, table2cols, option):
         _line = _line[0].split(',')
         for name, func in infofile[self.dbname][target_table]:
-            _line[table2cols[target_table].index(name)] = eval('self.' + func)()
+            if option == 'scrambled':
+                _line[table2cols[target_table].index(name)] = eval('self.' + func)()
+            elif option == 'blank':
+                _line[table2cols[target_table].index(name)] = ''
         _line = '(' + ','.join(_line) + ')'
         return _line
 
-    def validate(self):
-        pass
-
-    def parse(self, func='convert'):
+    def parse(self):
         table2cols = dict()
-        out = open(self.outfile, 'w')
+        out_scrambled = open(self.outfile_scrambled, 'w')
+        out_blank = open(self.outfile_blank, 'w')
         with open(self.dumpfile, 'rb') as f:
             for line in f:
                 line = line.decode('UTF-8')
@@ -91,42 +94,49 @@ class DBScramble:
                         if table in self.infofile[self.dbname].keys():
                             self.set_state('insert table')
                             target_table = table
-                    out.write(line)
+                    out_scrambled.write(line)
+                    out_blank.write(line)
                 elif self.state == "create table":
                     if line.strip().lower().startswith('`'):
                         col = re.findall('\`.*?\`', line)[0].strip('`')
                         table2cols[target_table].append(col)
                     if line.strip().endswith(';'):
                         self.set_state('none')
-                    out.write(line)
+                    out_scrambled.write(line)
+                    out_blank.write(line)
                 elif self.state == "insert table":
-                    if func == 'convert':
-                        l = re.findall("\((.+)\)", line)
-                        if l:
-                            _line = self.convert(l, self.infofile, target_table, table2cols)
-                            if line.endswith(';\n'):
-                                self.set_state("none")
-                                out.write(_line+';\n')
-                            elif line.endswith(',\n'):
-                                out.write(_line+',\n')
-                            elif line.endswith('\n'):
-                                out.write(_line+'\n')
-                        else:
-                            if line.endswith(';\n'):
-                                self.set_state("none")
-                                out.write(line)
-                    elif func == 'validate':
-                        # def validate function with self.infofile, target_table, table2cols
-                        self.validate()
-        out.close()
+                    l = re.findall("\((.+)\)", line)
+                    if l:
+                        _line_scrambled = self.convert(l, self.infofile, target_table, table2cols,option='scrambled')
+                        _line_blank = self.convert(l, self.infofile, target_table, table2cols, option='blank')
+                        if line.endswith(';\n'):
+                            self.set_state("none")
+                            out_scrambled.write(_line_scrambled + ';\n')
+                            out_blank.write(_line_blank + ';\n')
+                        elif line.endswith(',\n'):
+                            out_scrambled.write(_line_scrambled + ',\n')
+                            out_blank.write(_line_blank + ',\n')
+                        elif line.endswith('\n'):
+                            out_scrambled.write(_line_scrambled + '\n')
+                            out_blank.write(_line_blank + '\n')
+                    else:
+                        if line.endswith(';\n'):
+                            self.set_state("none")
+                            out_scrambled.write(line)
+                            out_blank.write(line)
+        out_scrambled.close()
+        out_blank.close()
 
 
 parser = argparse.ArgumentParser(description='convert or validate sqldump file')
-parser.add_argument('--func', type=str, default=None)
 parser.add_argument('--file', type=str, default=None)
 parser.add_argument('--input', type=str, default=None)
-parser.add_argument('--output', type=str, default=None)
+parser.add_argument('--output_scrambled', type=str, default=None)
+parser.add_argument('--output_blank', type=str, default=None)
 args = parser.parse_args()
 
-masker = DBScramble(dumpfile=args.input, infofile=args.file, outfile=args.output)
-masker.parse(func=args.func)
+masker = DBScramble(dumpfile=args.input,
+                    infofile=args.file,
+                    outfile_scrambled=args.output_scrambled,
+                    outfile_blank=args.output_blank)
+masker.parse()
