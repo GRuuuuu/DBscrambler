@@ -26,13 +26,12 @@ class DBScramble:
         self.outfile_blank = outfile_blank
         self.infofile = self.load_yaml(infofile)
         self.dbname = list(self.infofile.keys())[0]
-        self.zipcode_kr = open('random_zipcodeKR.txt')
+        self.zipcode_kr = open('../random_zipcodeKR.txt')
 
     def load_yaml(self, infofile):
         import yaml
         with open(infofile) as f:
             infofile = yaml.load(f, Loader=yaml.FullLoader)
-
         infofile = {
             infofile['db']: {
                 item['name']: [(details['column'], details['cvt_option'],
@@ -98,6 +97,9 @@ class DBScramble:
         # if object == 'digit':
         #     ret = '\'' + ''.join(random.choice(string.digits) for _ in range(length)) + '\''
         # return ret
+    def set_string(self, **params):
+        string='\'' + params['string'] + '\''
+        return string
 
     def fake_kor_address(self):
         fake = Faker('ko-KR')
