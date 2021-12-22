@@ -41,7 +41,15 @@ tables:
           - column: postal
             cvt_option: fake_kor_zipcode
           - column: member
-            cvt_option: fake_member
+            cvt_option: random_string
+            params:
+              - object:
+                  - digit
+                  - en_lowercase
+                  - en_upeercase
+                  - symbol
+                  - blank
+              - length: 14
           - column: emp
             cvt_option: fake_emp
           - column: memo

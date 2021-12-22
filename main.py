@@ -28,7 +28,7 @@ class DBScramble:
 
         infofile = {
             infofile['db']: {
-                item['name']: [(details['column'], details['cvt_option'])
+                item['name']: [(details['column'], details['cvt_option'], details['params'] if 'params' in details.keys() else None )
                                for details in item['object_list']]
                 for item in infofile['tables']}
         }
@@ -70,6 +70,25 @@ class DBScramble:
 
     def fake_member(self):
         return '\'' + ''.join(random.choice(string.digits) for _ in range(14)) + '\''
+
+    def random_string(self, **params):
+        pass
+        string_set = ''
+        if 'digit' in params['object']:
+            string_set +=string.digits
+        if 'en_lowercase' in params['object']:
+            string_set +=string.ascii_lowercase
+        if 'en_uppercase' in params['object']:
+            string_set +=string.ascii_uppercase
+        if 'symbol' in params['object']:
+            string_set +=string.punctuation.replace('\'','')
+        if 'blank' in params['object']:
+            string_set +=' '
+        ret = '\'' + ''.join(random.choice(string_set) for _ in range(params['length'])) + '\''
+        return ret
+        # if object == 'digit':
+        #     ret = '\'' + ''.join(random.choice(string.digits) for _ in range(length)) + '\''
+        # return ret
 
     def fake_kor_address(self):
         fake = Faker('ko-KR')
@@ -123,9 +142,15 @@ class DBScramble:
     # convert job in line
     def convert(self, _line, infofile, target_table, table2cols, option):
         _line = _line[0].split(',')
-        for name, func in infofile[self.dbname][target_table]:
+        for name, func, params in infofile[self.dbname][target_table]:
             if option == 'scrambled':
-                _line[table2cols[target_table].index(name)] = eval('self.' + func)()
+                if params is None:
+                    _line[table2cols[target_table].index(name)] = eval('self.' + func)()
+                else:
+                    _params = {}
+                    for each in params:
+                        _params.update(each)
+                    _line[table2cols[target_table].index(name)] = eval('self.' + func)(**_params)
             elif option == 'blank':
                 _line[table2cols[target_table].index(name)] = ''
         _line = '(' + ','.join(_line) + ')'
