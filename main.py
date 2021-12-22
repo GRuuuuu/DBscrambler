@@ -8,6 +8,12 @@ import names
 import string
 import lorem
 
+adr_meta = ['ZIP_NO', 'SIDO', 'SIDO_ENG', 'SIGUNGU', 'SIGUNGU_ENG', 'EUPMYUN', 'EUPMYUN_ENG',
+            'DORO_CD', 'DORO', 'DORO_ENG', 'UNDERGROUNT_YN', 'BUILD_NO1', 'BUILD_NO2', "BUILD_NO_MANAGE_NO",
+            'DARYANG_NM', 'BUILD_NM', 'DONG_CD', 'DONG_NM', 'RI', 'H_DONG_NM', 'SAN_YN', 'ZIBUN1',
+            'EUPMYUN_DONG_SN', 'ZIBUN2', 'ZIP_NO_OLD', 'ZIP_SN']
+
+
 class DBScramble:
     def __init__(self,
                  dumpfile='test_dump.sql',
@@ -20,6 +26,7 @@ class DBScramble:
         self.outfile_blank = outfile_blank
         self.infofile = self.load_yaml(infofile)
         self.dbname = list(self.infofile.keys())[0]
+        self.zipcode_kr = open('random_zipcodeKR.txt')
 
     def load_yaml(self, infofile):
         import yaml
@@ -28,7 +35,8 @@ class DBScramble:
 
         infofile = {
             infofile['db']: {
-                item['name']: [(details['column'], details['cvt_option'], details['params'] if 'params' in details.keys() else None )
+                item['name']: [(details['column'], details['cvt_option'],
+                                details['params'] if 'params' in details.keys() else None)
                                for details in item['object_list']]
                 for item in infofile['tables']}
         }
@@ -37,25 +45,24 @@ class DBScramble:
     def set_state(self, state):
         self.state = state
 
-
     # convert action functions
     def cvt_option_function(self):
         pass
 
     def fake_eng_sentence(self):
-        return '\'' + random.choice([lorem.sentence()[:30],'']) + '\''
+        return '\'' + random.choice([lorem.sentence()[:30], '']) + '\''
 
     def fake_email(self):
-        return '\'' + Faker().email() +'\''
+        return '\'' + Faker().email() + '\''
 
     def fake_ip(self):
-        return '\'' + Faker().ipv4() +'\''
+        return '\'' + Faker().ipv4() + '\''
 
     def korean_name(self):
         return '\'' + random.choice([namer.generate(True), namer.generate(False)]) + '\''
 
     def english_name(self):
-        return '\'' + names.get_full_name() +'\''
+        return '\'' + names.get_full_name() + '\''
 
     def phone_withdash(self):
         return '\'' + "010-" + str(random.randint(0, 9999)).zfill(4) + "-" + str(random.randint(0, 9999)).zfill(
@@ -71,19 +78,22 @@ class DBScramble:
     def fake_member(self):
         return '\'' + ''.join(random.choice(string.digits) for _ in range(14)) + '\''
 
+    def random_adress(self):
+        pass
+
     def random_string(self, **params):
         pass
         string_set = ''
         if 'digit' in params['object']:
-            string_set +=string.digits
+            string_set += string.digits
         if 'en_lowercase' in params['object']:
-            string_set +=string.ascii_lowercase
+            string_set += string.ascii_lowercase
         if 'en_uppercase' in params['object']:
-            string_set +=string.ascii_uppercase
+            string_set += string.ascii_uppercase
         if 'symbol' in params['object']:
-            string_set +=string.punctuation.replace('\'','')
+            string_set += string.punctuation.replace('\'', '')
         if 'blank' in params['object']:
-            string_set +=' '
+            string_set += ' '
         ret = '\'' + ''.join(random.choice(string_set) for _ in range(params['length'])) + '\''
         return ret
         # if object == 'digit':
@@ -119,6 +129,12 @@ class DBScramble:
         yymmdd = str(random_date.year) + str(random_date.month).zfill(2) + str(random_date.day).zfill(2)
         return '\'' + yymmdd + '\''
 
+    def kr_zipcode(self, address):
+        return '\'' + address[adr_meta.index('ZIP_NO')] + '\''
+
+    def kr_doro(self, address):
+        return '\'' + address[adr_meta.index('SIDO')] + ' ' + address[adr_meta.index('SIGUNGU')] + ' ' + address[
+            adr_meta.index('DORO')] + '\''
 
     def korean_rid(self):
         start_date = datetime.date(1900, 1, 1)
@@ -146,6 +162,12 @@ class DBScramble:
             if option == 'scrambled':
                 if params is None:
                     _line[table2cols[target_table].index(name)] = eval('self.' + func)()
+                elif func == 'random_address':
+                    fullAdr = self.zipcode_kr.readline()
+                    address = fullAdr.split('|')
+                    for each in params:
+                        _line[table2cols[target_table].index(each['column'])] = eval('self.' + each['cvt_option'])(
+                            address)
                 else:
                     _params = {}
                     for each in params:
@@ -189,7 +211,7 @@ class DBScramble:
                 elif self.state == "insert table":
                     l = re.findall("\((.+)\)", line)
                     if l:
-                        _line_scrambled = self.convert(l, self.infofile, target_table, table2cols,option='scrambled')
+                        _line_scrambled = self.convert(l, self.infofile, target_table, table2cols, option='scrambled')
                         _line_blank = self.convert(l, self.infofile, target_table, table2cols, option='blank')
                         if line.endswith(';\n'):
                             self.set_state("none")

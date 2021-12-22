@@ -34,12 +34,15 @@ tables:
             cvt_option: phone_nodash
           - column: rid
             cvt_option: korean_rid
-          - column: address
-            cvt_option: fake_kor_address
+          - column: zipcode
+            cvt_option: random_address
+            params:
+                - column: zipcode
+                  cvt_option: kr_zipcode
+                - column: main_address
+                  cvt_option: kr_doro
           - column: account
             cvt_option: fake_account
-          - column: postal
-            cvt_option: fake_kor_zipcode
           - column: member
             cvt_option: random_string
             params:
@@ -51,7 +54,19 @@ tables:
                   - blank
               - length: 14
           - column: emp
-            cvt_option: fake_emp
+            cvt_option: random_string
+            params:
+              - object:
+                  - digit
+              - length: 4
           - column: memo
-            cvt_option: fake_eng_sentence
+            cvt_option: random_string
+            params:
+              - object:
+                  - digit
+                  - en_lowercase
+                  - en_upeercase
+                  - blank
+              - length: 40
+
 
