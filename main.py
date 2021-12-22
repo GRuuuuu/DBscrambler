@@ -64,12 +64,12 @@ class DBScramble:
     def english_name(self):
         return '\'' + names.get_full_name() + '\''
 
-    def phone_withdash(self):
-        return '\'' + "010-" + str(random.randint(0, 9999)).zfill(4) + "-" + str(random.randint(0, 9999)).zfill(
+    def phone_withdash(self, front_3dgits):
+        return '\'' + front_3dgits + "-" + str(random.randint(0, 9999)).zfill(4) + "-" + str(random.randint(0, 9999)).zfill(
             4) + '\''
 
-    def phone_nodash(self):
-        return '\'' + "010" + str(random.randint(0, 9999)).zfill(4) + str(random.randint(0, 9999)).zfill(
+    def phone_nodash(self, front_3dgits):
+        return '\'' + front_3dgits + str(random.randint(0, 9999)).zfill(4) + str(random.randint(0, 9999)).zfill(
             4) + '\''
 
     def fake_emp(self):
@@ -82,7 +82,6 @@ class DBScramble:
         pass
 
     def random_string(self, **params):
-        pass
         string_set = ''
         if 'digit' in params['object']:
             string_set += string.digits
@@ -129,6 +128,9 @@ class DBScramble:
         yymmdd = str(random_date.year) + str(random_date.month).zfill(2) + str(random_date.day).zfill(2)
         return '\'' + yymmdd + '\''
 
+    def rand_nice_no(self):
+        return str(random.randint(10000, 99999))
+
     def kr_zipcode(self, address):
         return '\'' + address[adr_meta.index('ZIP_NO')] + '\''
 
@@ -161,18 +163,25 @@ class DBScramble:
         for name, func, params in infofile[self.dbname][target_table]:
             if option == 'scrambled':
                 if params is None:
-                    _line[table2cols[target_table].index(name)] = eval('self.' + func)()
+                    if func in ['phone_withdash','phone_nodash']:
+                        front_3digit = _line[table2cols[target_table].index(name)][1:4]
+                        if _line[table2cols[target_table].index(name)].strip('\'') not in ['Removed', 'null', '']:
+                            _line[table2cols[target_table].index(name)] = eval('self.' + func)(front_3digit)
+                    else:
+                        if _line[table2cols[target_table].index(name)].strip('\'') not in ['Removed', 'null', '']:
+                            _line[table2cols[target_table].index(name)] = eval('self.' + func)()
                 elif func == 'random_address':
                     fullAdr = self.zipcode_kr.readline()
                     address = fullAdr.split('|')
                     for each in params:
-                        _line[table2cols[target_table].index(each['column'])] = eval('self.' + each['cvt_option'])(
-                            address)
+                        if _line[table2cols[target_table].index(each['column'])].strip('\'') not in ['Removed', 'null', '']:
+                            _line[table2cols[target_table].index(each['column'])] = eval('self.' + each['cvt_option'])(address)
                 else:
                     _params = {}
                     for each in params:
                         _params.update(each)
-                    _line[table2cols[target_table].index(name)] = eval('self.' + func)(**_params)
+                    if _line[table2cols[target_table].index(name)].strip('\'') not in ['Removed', 'null', '']:
+                        _line[table2cols[target_table].index(name)] = eval('self.' + func)(**_params)
             elif option == 'blank':
                 _line[table2cols[target_table].index(name)] = ''
         _line = '(' + ','.join(_line) + ')'

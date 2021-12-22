@@ -1,0 +1,30 @@
+---
+# convert_info.yml
+db: testdb
+tables:
+    - name: order_entity
+      object_list:
+          - column: order_number
+            cvt_option: random_string
+            params:
+              - object:
+                  - digit
+                  - en_lowercase
+                  - en_upeercase
+                  - symbol
+                  - blank
+              - length: 14
+          - column: date
+            cvt_option: phone_nodash
+          - column: product_id
+            cvt_option: random_address
+            params:
+              - column: product_id
+                cvt_option: kr_zipcode
+              - column: status
+                cvt_option: kr_doro
+          - column: user_name
+            cvt_option: korean_name
+          - column: num_of_prod
+            cvt_option: rand_nice_no
+

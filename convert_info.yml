@@ -68,5 +68,7 @@ tables:
                   - en_upeercase
                   - blank
               - length: 40
+          - column: nice_no
+            cvt_option: rand_nice_no
 
 
