@@ -37,6 +37,11 @@ class DBScramble:
     def set_state(self, state):
         self.state = state
 
+
+    # convert action functions
+    def cvt_option_function(self):
+        pass
+
     def fake_eng_sentence(self):
         return '\'' + random.choice([lorem.sentence()[:30],'']) + '\''
 
@@ -48,11 +53,14 @@ class DBScramble:
 
     def korean_name(self):
         return '\'' + random.choice([namer.generate(True), namer.generate(False)]) + '\''
+
     def english_name(self):
         return '\'' + names.get_full_name() +'\''
+
     def phone_withdash(self):
         return '\'' + "010-" + str(random.randint(0, 9999)).zfill(4) + "-" + str(random.randint(0, 9999)).zfill(
             4) + '\''
+
     def phone_nodash(self):
         return '\'' + "010" + str(random.randint(0, 9999)).zfill(4) + str(random.randint(0, 9999)).zfill(
             4) + '\''
@@ -112,6 +120,7 @@ class DBScramble:
         id = yymmdd + '-' + back + str(last)[0]
         return '\'' + id + '\''
 
+    # convert job in line
     def convert(self, _line, infofile, target_table, table2cols, option):
         _line = _line[0].split(',')
         for name, func in infofile[self.dbname][target_table]:
@@ -122,6 +131,7 @@ class DBScramble:
         _line = '(' + ','.join(_line) + ')'
         return _line
 
+    # parsing via line-by-line
     def parse(self):
         table2cols = dict()
         out_scrambled = open(self.outfile_scrambled, 'w')
