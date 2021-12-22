@@ -4,7 +4,9 @@ import datetime
 from korean_name_generator import namer
 from faker import Faker
 import argparse
-
+import names
+import string
+import lorem
 
 class DBScramble:
     def __init__(self,
@@ -35,16 +37,61 @@ class DBScramble:
     def set_state(self, state):
         self.state = state
 
+    def fake_eng_sentence(self):
+        return '\'' + random.choice([lorem.sentence()[:30],'']) + '\''
+
+    def fake_email(self):
+        return '\'' + Faker().email() +'\''
+
+    def fake_ip(self):
+        return '\'' + Faker().ipv4() +'\''
+
     def korean_name(self):
         return '\'' + random.choice([namer.generate(True), namer.generate(False)]) + '\''
-
-    def korean_phone(self):
+    def english_name(self):
+        return '\'' + names.get_full_name() +'\''
+    def phone_withdash(self):
         return '\'' + "010-" + str(random.randint(0, 9999)).zfill(4) + "-" + str(random.randint(0, 9999)).zfill(
             4) + '\''
+    def phone_nodash(self):
+        return '\'' + "010" + str(random.randint(0, 9999)).zfill(4) + str(random.randint(0, 9999)).zfill(
+            4) + '\''
 
-    def korean_address(self):
+    def fake_emp(self):
+        return '\'' + ''.join(random.choice(string.digits) for _ in range(4)) + '\''
+
+    def fake_member(self):
+        return '\'' + ''.join(random.choice(string.digits) for _ in range(14)) + '\''
+
+    def fake_kor_address(self):
         fake = Faker('ko-KR')
         return '\'' + fake.address() + '\''
+
+    def fake_kor_zipcode(self):
+        fake = Faker('ko-KR')
+        return '\'' + fake.postcode() + '\''
+
+    def fake_eng_address(self):
+        fake = Faker()
+        return '\'' + fake.address() + '\''
+
+    def fake_eng_zipcode(self):
+        fake = Faker()
+        return '\'' + fake.postcode() + '\''
+
+    def fake_account(self):
+        return '\'' + ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(10)) + '\''
+
+    def fake_birth(self):
+        start_date = datetime.date(1900, 1, 1)
+        end_date = datetime.date.today()
+        time_between_dates = end_date - start_date
+        days_between_dates = time_between_dates.days
+        random_number_of_days = random.randrange(days_between_dates)
+        random_date = start_date + datetime.timedelta(days=random_number_of_days)
+        yymmdd = str(random_date.year) + str(random_date.month).zfill(2) + str(random_date.day).zfill(2)
+        return '\'' + yymmdd + '\''
+
 
     def korean_rid(self):
         start_date = datetime.date(1900, 1, 1)

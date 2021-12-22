@@ -5,19 +5,45 @@ tables:
     - name: sample_table1
       object_list:
           - column: name
-            cvt_option: korean_name
+            cvt_option: english_name
+          - column: email
+            cvt_option: fake_email
           - column: phone
-            cvt_option: korean_phone
+            cvt_option: phone_nodash
           - column: address
-            cvt_option: korean_address
+            cvt_option: fake_kor_address
+          - column: ip
+            cvt_option: fake_ip
     - name: sample_table2
       object_list:
           - column: name
             cvt_option: korean_name
           - column: phone
-            cvt_option: korean_phone
+            cvt_option: phone_withdash
           - column: rid
             cvt_option: korean_rid
           - column: address
-            cvt_option: korean_address
+            cvt_option: fake_kor_address
+          - column: birth
+            cvt_option: fake_birth
+    - name: sample_table3
+      object_list:
+          - column: name
+            cvt_option: korean_name
+          - column: phone
+            cvt_option: phone_nodash
+          - column: rid
+            cvt_option: korean_rid
+          - column: address
+            cvt_option: fake_kor_address
+          - column: account
+            cvt_option: fake_account
+          - column: postal
+            cvt_option: fake_kor_zipcode
+          - column: member
+            cvt_option: fake_member
+          - column: emp
+            cvt_option: fake_emp
+          - column: memo
+            cvt_option: fake_eng_sentence
 
