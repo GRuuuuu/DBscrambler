@@ -1,0 +1,9 @@
+certifi==2021.10.8
+Faker==10.0.0
+korean-name-generator==1.0.1
+lorem==0.1.1
+names==0.3.0
+python-dateutil==2.8.2
+PyYAML==6.0
+six==1.16.0
+text-unidecode==1.3
