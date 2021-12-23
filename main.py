@@ -26,7 +26,9 @@ class DBScramble:
         self.outfile_blank = outfile_blank
         self.infofile = self.load_yaml(infofile)
         self.dbname = list(self.infofile.keys())[0]
-        self.zipcode_kr = open('../random_zipcodeKR.txt')
+        self.zipcode_kr = open('random_zipcodeKR.txt')
+        self.faker_en = Faker()
+        self.faker_kr = Faker('ko-KR')
 
     def load_yaml(self, infofile):
         import yaml
@@ -52,10 +54,10 @@ class DBScramble:
         return '\'' + random.choice([lorem.sentence()[:30], '']) + '\''
 
     def fake_email(self):
-        return '\'' + Faker().email() + '\''
+        return '\'' + self.faker_en.email() + '\''
 
     def fake_ip(self):
-        return '\'' + Faker().ipv4() + '\''
+        return '\'' + self.faker_en.ipv4() + '\''
 
     def korean_name(self):
         return '\'' + random.choice([namer.generate(True), namer.generate(False)]) + '\''
@@ -102,20 +104,20 @@ class DBScramble:
         return string
 
     def fake_kor_address(self):
-        fake = Faker('ko-KR')
-        return '\'' + fake.address() + '\''
+        # fake = Faker('ko-KR')
+        return '\'' + self.faker_kr.address() + '\''
 
     def fake_kor_zipcode(self):
-        fake = Faker('ko-KR')
-        return '\'' + fake.postcode() + '\''
+        # fake = Faker('ko-KR')
+        return '\'' + self.faker_kr.postcode() + '\''
 
     def fake_eng_address(self):
-        fake = Faker()
-        return '\'' + fake.address() + '\''
+        # fake = Faker()
+        return '\'' + self.faker_en.address() + '\''
 
     def fake_eng_zipcode(self):
-        fake = Faker()
-        return '\'' + fake.postcode() + '\''
+        # fake = Faker()
+        return '\'' + self.faker_en.postcode() + '\''
 
     def fake_account(self):
         return '\'' + ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(10)) + '\''
