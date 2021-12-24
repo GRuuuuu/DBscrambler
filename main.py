@@ -12,7 +12,7 @@ adr_meta = ['ZIP_NO', 'SIDO', 'SIDO_ENG', 'SIGUNGU', 'SIGUNGU_ENG', 'EUPMYUN', '
             'DORO_CD', 'DORO', 'DORO_ENG', 'UNDERGROUNT_YN', 'BUILD_NO1', 'BUILD_NO2', "BUILD_NO_MANAGE_NO",
             'DARYANG_NM', 'BUILD_NM', 'DONG_CD', 'DONG_NM', 'RI', 'H_DONG_NM', 'SAN_YN', 'ZIBUN1',
             'EUPMYUN_DONG_SN', 'ZIBUN2', 'ZIP_NO_OLD', 'ZIP_SN']
-
+zipcode_path='random_zipcodeKR.txt'
 
 class DBScramble:
     def __init__(self,
@@ -26,7 +26,7 @@ class DBScramble:
         self.outfile_blank = outfile_blank
         self.infofile = self.load_yaml(infofile)
         self.dbname = list(self.infofile.keys())[0]
-        self.zipcode_kr = open('random_zipcodeKR.txt')
+        self.zipcode_kr = open(zipcode_path)
         self.faker_en = Faker()
         self.faker_kr = Faker('ko-KR')
 
@@ -35,11 +35,12 @@ class DBScramble:
         with open(infofile) as f:
             infofile = yaml.load(f, Loader=yaml.FullLoader)
         infofile = {
-            infofile['db']: {
+            db['name']: {
                 item['name']: [(details['column'], details['cvt_option'],
                                 details['params'] if 'params' in details.keys() else None)
                                for details in item['object_list']]
-                for item in infofile['tables']}
+                            for item in db['tables']}
+                        for db in infofile['dbs']
         }
         return infofile
 
@@ -176,6 +177,9 @@ class DBScramble:
                             _line[table2cols[target_table].index(name)] = eval('self.' + func)()
                 elif func == 'random_address':
                     fullAdr = self.zipcode_kr.readline()
+                    if fullAdr is None:
+                        self.zipcode_kr = open(zipcode_path)
+                        fullAdr = self.zipcode_kr.readline()
                     address = fullAdr.split('|')
                     for each in params:
                         if _line[table2cols[target_table].index(each['column'])].strip('\'') not in ['Removed', 'null', '']:
