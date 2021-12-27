@@ -68,6 +68,18 @@ dbs:
                 - string: "S2bDzun9lauk+JzbEvydLKphVi/l1Jq3QaLokfcHBTvV/AmjCJanpKRPXLfnQ52JjMz/xlsycS5D5spZGv0Sw=="
             - column: nice_no
               cvt_option: rand_nice_no
+            - column: gd
+              cvt_option: rand_element
+              params:
+                - object:
+                    - '0'
+                    - '1'
+            - column: ntn
+              cvt_option: rand_element
+              params:
+                - object:
+                    - '1'
+                    - '0'
   - name: testdb2
     tables:
       - name: sample_table1

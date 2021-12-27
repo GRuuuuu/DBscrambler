@@ -90,9 +90,6 @@ class DBScramble:
     def fake_member(self):
         return '\'' + ''.join(random.choice(string.digits) for _ in range(14)) + '\''
 
-    def random_adress(self):
-        pass
-
     def random_string(self, **params):
         string_set = ''
         if 'digit' in params['object']:
@@ -147,6 +144,9 @@ class DBScramble:
     def rand_nice_no(self):
         return str(random.randint(10000, 99999))
 
+    def rand_element(self, lst):
+        return '\'' + random.choice(lst) + '\''
+
     def kr_zipcode(self, address):
         return '\'' + address[adr_meta.index('ZIP_NO')] + '\''
 
@@ -191,6 +191,9 @@ class DBScramble:
                     else:
                         if element.lower() not in ['null'] and element.strip('\'') not in ['Removed', '']:
                             _line[table2cols[target_table].index(name)] = eval('self.' + func)()
+                elif func == 'rand_element':
+                    if element.lower() not in ['null'] and element.strip('\'') not in ['Removed', '']:
+                        _line[table2cols[target_table].index(name)] = eval('self.'+func)(params[0]['object'])
                 elif func == 'random_address':
                     fullAdr = self.zipcode_kr.readline()
                     if fullAdr is None:
