@@ -6,7 +6,6 @@ from faker import Faker
 import argparse
 import names
 import string
-import lorem
 
 adr_meta = ['ZIP_NO', 'SIDO', 'SIDO_ENG', 'SIGUNGU', 'SIGUNGU_ENG', 'EUPMYUN', 'EUPMYUN_ENG',
             'DORO_CD', 'DORO', 'DORO_ENG', 'UNDERGROUNT_YN', 'BUILD_NO1', 'BUILD_NO2', "BUILD_NO_MANAGE_NO",
@@ -30,6 +29,7 @@ class DBScramble:
         self.faker_en = Faker()
         self.faker_kr = Faker('ko-KR')
 
+    # yml 로딩 후 function 콜하기 쉽게 반화
     def load_yaml(self, infofile):
         import yaml
         with open(infofile) as f:
@@ -44,28 +44,27 @@ class DBScramble:
         }
         return infofile
 
+    # line-by-line 로직에서 create table 혹은 insert into와 같은 것을 만날 때 스테이트 저장
     def set_state(self, state):
         self.state = state
 
-    # convert action functions
-    def cvt_option_function(self):
-        pass
-
-    def fake_eng_sentence(self):
-        return '\'' + random.choice([lorem.sentence()[:30], '']) + '\''
-
+    # random email 리턴
     def fake_email(self):
         return '\'' + self.faker_en.email() + '\''
 
+    # random ip 리턴
     def fake_ip(self):
         return '\'' + self.faker_en.ipv4() + '\''
 
+    # korean name generator를 통해 random name 리턴
     def korean_name(self):
         return '\'' + random.choice([namer.generate(True), namer.generate(False)]) + '\''
 
+    # names 모듈을 통해 영어 랜덤 이름 리턴
     def english_name(self):
         return '\'' + names.get_full_name() + '\''
 
+    # 전화번호 대쉬가 있는 경우의 랜덤 리턴
     def phone_withdash(self, front_3dgits):
         if front_3dgits.startswith('02'):
             return '\'' + '02' + "-" + str(random.randint(0, 9999)).zfill(4) + "-" + str(random.randint(0, 9999)).zfill(
@@ -74,6 +73,7 @@ class DBScramble:
             return '\'' + front_3dgits + "-" + str(random.randint(0, 9999)).zfill(4) + "-" + str(random.randint(0, 9999)).zfill(
             4) + '\''
 
+    # 전화번호 대쉬가 없는 경우의 랜덤 리턴
     def phone_nodash(self, front_3dgits):
         if front_3dgits.startswith('02'):
             return '\'' + '02' + str(random.randint(0, 9999)).zfill(4) + str(random.randint(0, 9999)).zfill(
@@ -82,14 +82,7 @@ class DBScramble:
             return '\'' + front_3dgits + str(random.randint(0, 9999)).zfill(4) + str(random.randint(0, 9999)).zfill(
                 4) + '\''
 
-
-
-    def fake_emp(self):
-        return '\'' + ''.join(random.choice(string.digits) for _ in range(4)) + '\''
-
-    def fake_member(self):
-        return '\'' + ''.join(random.choice(string.digits) for _ in range(14)) + '\''
-
+    # 숫자, 대소문자, 심볼, 공백을 포함한 랜덤 스트링 리턴
     def random_string(self, **params):
         string_set = ''
         if 'digit' in params['object']:
@@ -108,29 +101,36 @@ class DBScramble:
         #     ret = '\'' + ''.join(random.choice(string.digits) for _ in range(length)) + '\''
         # return ret
 
+    # params에서 정해진 스트링 리턴
     def set_string(self, **params):
         string='\'' + params['string'] + '\''
         return string
 
+    # Faker를 통해 랜덤 한국 주소 리턴
     def fake_kor_address(self):
         # fake = Faker('ko-KR')
         return '\'' + self.faker_kr.address() + '\''
 
+    # Faker를 통해 랜덤 한국 우편번호 리턴
     def fake_kor_zipcode(self):
         # fake = Faker('ko-KR')
         return '\'' + self.faker_kr.postcode() + '\''
 
+    # Faker를 통해 랜덤 미국 주소 리턴
     def fake_eng_address(self):
         # fake = Faker()
         return '\'' + self.faker_en.address() + '\''
 
+    # Faker를 통해 랜덤 미국 우편번호 리턴
     def fake_eng_zipcode(self):
         # fake = Faker()
         return '\'' + self.faker_en.postcode() + '\''
 
+    # Faker를 통해 숫자, 소문자 포함 10자리 랜덤 리턴
     def fake_account(self):
         return '\'' + ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(10)) + '\''
 
+    # 출생연월 yymmdd 형태로 랜덤 리턴
     def fake_birth(self):
         start_date = datetime.date(1900, 1, 1)
         end_date = datetime.date.today()
@@ -141,23 +141,29 @@ class DBScramble:
         yymmdd = str(random_date.year) + str(random_date.month).zfill(2) + str(random_date.day).zfill(2)
         return '\'' + yymmdd + '\''
 
+    # nice no 10000~99999로 랜덤 리턴
     def rand_nice_no(self):
         return str(random.randint(10000, 99999))
 
+    # 리스트 형태 lst에서 랜덤 리턴
     def rand_element(self, lst):
         return '\'' + random.choice(lst) + '\''
 
+    # 읽어드린 address 라인에서 우편번호 리턴
     def kr_zipcode(self, address):
         return '\'' + address[adr_meta.index('ZIP_NO')] + '\''
 
+    # 읽어드린 address 라인에서 도로명 주소(시도+시군구+도로) 리턴
     def kr_doro(self, address):
         return '\'' + address[adr_meta.index('SIDO')] + ' ' + address[adr_meta.index('SIGUNGU')] + ' ' + address[
             adr_meta.index('DORO')] + '\''
 
+    # 읽어드린 address 라인에서 상세주소(건물이름+법정동이름) 리턴
     def kr_doro_detail(self, address):
         ret = address[adr_meta.index('BUILD_NM')] + ' ' + address[adr_meta.index('DONG_NM')] + ' ' + str(random.randint(1, 20))+ '층'
         return '\'' + ret.strip() + '\''
 
+    # 규칙에 맞게 한국 랜덤 주민번호 리턴
     def korean_rid(self):
         start_date = datetime.date(1900, 1, 1)
         end_date = datetime.date.today()
