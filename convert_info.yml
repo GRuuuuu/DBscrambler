@@ -1,69 +1,82 @@
 ---
 # convert_info.yml
-db: testdb
-tables:
-    - name: sample_table1
-      object_list:
-          - column: name
-            cvt_option: english_name
-          - column: email
-            cvt_option: fake_email
-          - column: phone
-            cvt_option: phone_nodash
-          - column: address
-            cvt_option: fake_kor_address
-          - column: ip
-            cvt_option: fake_ip
-    - name: sample_table2
-      object_list:
-          - column: name
-            cvt_option: korean_name
-          - column: phone
-            cvt_option: phone_withdash
-          - column: rid
-            cvt_option: korean_rid
-          - column: address
-            cvt_option: fake_kor_address
-          - column: birth
-            cvt_option: fake_birth
-    - name: sample_table3
-      object_list:
-          - column: name
-            cvt_option: korean_name
-          - column: phone
-            cvt_option: phone_nodash
-          - column: rid
-            cvt_option: korean_rid
-          - column: zipcode
-            cvt_option: random_address
-            params:
-                - column: zipcode
-                  cvt_option: kr_zipcode
-                - column: main_address
-                  cvt_option: kr_doro
-          - column: account
-            cvt_option: fake_account
-          - column: member
-            cvt_option: random_string
-            params:
-              - object:
-                  - digit
-                  - en_lowercase
-                  - en_upeercase
-                  - symbol
-                  - blank
-              - length: 14
-          - column: emp
-            cvt_option: random_string
-            params:
-              - object:
-                  - digit
-              - length: 4
-          - column: memo
-            cvt_option: set_string
-            params:
-              - string: "S2bDzun9lauk+JzbEvydLKphVi/l1Jq3QaLokfcHBTvV/AmjCJanpKRPXLfnQ52JjMz/xlsycS5D5spZGv0Sw=="
-          - column: nice_no
-            cvt_option: rand_nice_no
-
-
+dbs:
+  - name: testdb
+    tables:
+      - name: sample_table1
+        object_list:
+            - column: name
+              cvt_option: english_name
+            - column: email
+              cvt_option: fake_email
+            - column: phone
+              cvt_option: phone_nodash
+            - column: address
+              cvt_option: fake_kor_address
+            - column: ip
+              cvt_option: fake_ip
+      - name: sample_table2
+        object_list:
+            - column: name
+              cvt_option: korean_name
+            - column: phone
+              cvt_option: phone_withdash
+            - column: rid
+              cvt_option: korean_rid
+            - column: address
+              cvt_option: fake_kor_address
+            - column: birth
+              cvt_option: fake_birth
+      - name: sample_table3
+        object_list:
+            - column: name
+              cvt_option: korean_name
+            - column: phone
+              cvt_option: phone_nodash
+            - column: rid
+              cvt_option: korean_rid
+            - column: zipcode
+              cvt_option: random_address
+              params:
+                  - column: zipcode
+                    cvt_option: kr_zipcode
+                  - column: main_address
+                    cvt_option: kr_doro
+            - column: account
+              cvt_option: fake_account
+            - column: member
+              cvt_option: random_string
+              params:
+                - object:
+                    - digit
+                    - en_lowercase
+                    - en_upeercase
+                    - symbol
+                    - blank
+                - length: 14
+            - column: emp
+              cvt_option: random_string
+              params:
+                - object:
+                    - digit
+                - length: 4
+            - column: memo
+              cvt_option: set_string
+              params:
+                - string: "S2bDzun9lauk+JzbEvydLKphVi/l1Jq3QaLokfcHBTvV/AmjCJanpKRPXLfnQ52JjMz/xlsycS5D5spZGv0Sw=="
+            - column: nice_no
+              cvt_option: rand_nice_no
+  - name: testdb2
+    tables:
+      - name: sample_table1
+        object_list:
+            - column: name
+              cvt_option: english_name
+            - column: email
+              cvt_option: fake_email
+            - column: phone
+              cvt_option: phone_nodash
+            - column: address
+              cvt_option: fake_kor_address
+            - column: ip
+              cvt_option: fake_ip
