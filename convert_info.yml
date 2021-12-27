@@ -42,6 +42,8 @@ dbs:
                     cvt_option: kr_zipcode
                   - column: main_address
                     cvt_option: kr_doro
+                  - column: main_dtl_address
+                    cvt_option: kr_doro_detail
             - column: account
               cvt_option: fake_account
             - column: member

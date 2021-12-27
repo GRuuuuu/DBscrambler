@@ -154,6 +154,10 @@ class DBScramble:
         return '\'' + address[adr_meta.index('SIDO')] + ' ' + address[adr_meta.index('SIGUNGU')] + ' ' + address[
             adr_meta.index('DORO')] + '\''
 
+    def kr_doro_detail(self, address):
+        ret = address[adr_meta.index('BUILD_NM')] + ' ' + address[adr_meta.index('DONG_NM')] + ' ' + str(random.randint(1, 20))+ '층'
+        return '\'' + ret.strip() + '\''
+
     def korean_rid(self):
         start_date = datetime.date(1900, 1, 1)
         end_date = datetime.date.today()
