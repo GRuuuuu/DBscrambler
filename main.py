@@ -67,12 +67,22 @@ class DBScramble:
         return '\'' + names.get_full_name() + '\''
 
     def phone_withdash(self, front_3dgits):
-        return '\'' + front_3dgits + "-" + str(random.randint(0, 9999)).zfill(4) + "-" + str(random.randint(0, 9999)).zfill(
+        if front_3dgits.startswith('02'):
+            return '\'' + '02' + "-" + str(random.randint(0, 9999)).zfill(4) + "-" + str(random.randint(0, 9999)).zfill(
+            4) + '\''
+        else:
+            return '\'' + front_3dgits + "-" + str(random.randint(0, 9999)).zfill(4) + "-" + str(random.randint(0, 9999)).zfill(
             4) + '\''
 
     def phone_nodash(self, front_3dgits):
-        return '\'' + front_3dgits + str(random.randint(0, 9999)).zfill(4) + str(random.randint(0, 9999)).zfill(
-            4) + '\''
+        if front_3dgits.startswith('02'):
+            return '\'' + '02' + str(random.randint(0, 9999)).zfill(4) + str(random.randint(0, 9999)).zfill(
+                4) + '\''
+        else:
+            return '\'' + front_3dgits + str(random.randint(0, 9999)).zfill(4) + str(random.randint(0, 9999)).zfill(
+                4) + '\''
+
+
 
     def fake_emp(self):
         return '\'' + ''.join(random.choice(string.digits) for _ in range(4)) + '\''
@@ -100,6 +110,7 @@ class DBScramble:
         # if object == 'digit':
         #     ret = '\'' + ''.join(random.choice(string.digits) for _ in range(length)) + '\''
         # return ret
+
     def set_string(self, **params):
         string='\'' + params['string'] + '\''
         return string
