@@ -166,25 +166,27 @@ class DBScramble:
         _line = _line[0].split(',')
         for name, func, params in infofile[self.dbname][target_table]:
             if option == 'scrambled':
+                element = _line[table2cols[target_table].index(name)]
                 if params is None:
                     if func in ['phone_withdash','phone_nodash']:
-                        front_3digit = _line[table2cols[target_table].index(name)][1:4]
-                        if _line[table2cols[target_table].index(name)].strip('\'') not in ['Removed', 'null', '']:
+                        front_3digit = element[1:4]
+                        if element.lower() not in ['null'] and element.strip('\'') not in ['Removed', '']:
                             _line[table2cols[target_table].index(name)] = eval('self.' + func)(front_3digit)
                     else:
-                        if _line[table2cols[target_table].index(name)].strip('\'') not in ['Removed', 'null', '']:
+                        if element.lower() not in ['null'] and element.strip('\'') not in ['Removed', '']:
                             _line[table2cols[target_table].index(name)] = eval('self.' + func)()
                 elif func == 'random_address':
                     fullAdr = self.zipcode_kr.readline()
                     address = fullAdr.split('|')
                     for each in params:
-                        if _line[table2cols[target_table].index(each['column'])].strip('\'') not in ['Removed', 'null', '']:
+                        _element = _line[table2cols[target_table].index(each['column'])]
+                        if _element.lower() not in ['null'] and _element.strip('\'') not in ['Removed', '']:
                             _line[table2cols[target_table].index(each['column'])] = eval('self.' + each['cvt_option'])(address)
                 else:
                     _params = {}
                     for each in params:
                         _params.update(each)
-                    if _line[table2cols[target_table].index(name)].strip('\'') not in ['Removed', 'null', '']:
+                    if element.lower() not in ['null'] and element.strip('\'') not in ['Removed', '']:
                         _line[table2cols[target_table].index(name)] = eval('self.' + func)(**_params)
             elif option == 'blank':
                 _line[table2cols[target_table].index(name)] = ''
