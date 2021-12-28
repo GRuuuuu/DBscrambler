@@ -183,11 +183,41 @@ class DBScramble:
         id = yymmdd + '-' + back + str(last)[0]
         return '\'' + id + '\''
 
+    def split_insert(self, line):
+        inQuotes = 0;  # in Quotes=1, not in Quotes=0
+        isEscape = 0;  # escaped character=1, nomal character=0
+
+        lst = []
+        array = []
+        for a in line:
+            # print(a)
+            if a == ',' and inQuotes == 0:
+                lst.append("".join(array))
+                array.clear()
+            elif a == '\'' and inQuotes == 0 and isEscape == 0:
+                array.append(a)
+                inQuotes = 1
+            elif a == '\'' and inQuotes == 1 and isEscape == 0:
+                array.append(a)
+                inQuotes = 0
+            elif a == '\\':
+                array.append(a)
+                isEscape = 1
+            else:
+                if isEscape == 1:
+                    isEscape = 0
+                array.append(a)
+        lst.append("".join(array))
+        return lst
+
     # convert job in line
     def convert(self, _line, infofile, target_table, table2cols, option):
         # _line = _line[0].split(',')
         # _line = [ele for each in re.split(r',(?=\')', _line[0]) for ele in each.split(',')]
-        _line = re.split(r",(?=(?:[^\']*\'[^\']*\')*[^\']*$)", _line[0])
+        # _line = re.split(r",(?=(?:[^\']*\'[^\']*\')*[^\']*$)", _line[0])
+        # _line = re.split(r"(?:^|,)(\"(?:[^\"]+|\"\")*\"|[^,]*)", _line[0])
+        # _line = re.split(r"/'[^/']*/'|[^,]+",_line[0])
+        _line = self.split_insert(_line[0])
         for name, func, params in infofile[self.dbname][target_table]:
             if option == 'scrambled':
                 element = _line[table2cols[target_table].index(name)]
@@ -228,9 +258,9 @@ class DBScramble:
         table2cols = dict()
         out_scrambled = open(self.outfile_scrambled, 'w')
         out_blank = open(self.outfile_blank, 'w')
-        with open(self.dumpfile, 'rb') as f:
+        with open(self.dumpfile) as f:
             for line in f:
-                line = line.decode('UTF-8')
+                # line = line.decode('UTF-8')
                 if self.state == "none":
                     if line.strip().lower().startswith('create table'):
                         table = re.findall('\`.*?\`', line)[0].strip('`')
