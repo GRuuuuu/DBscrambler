@@ -185,7 +185,8 @@ class DBScramble:
 
     # convert job in line
     def convert(self, _line, infofile, target_table, table2cols, option):
-        _line = _line[0].split(',')
+        # _line = _line[0].split(',')
+        _line = [ele for each in re.split(r',(?=\')', _line[0]) for ele in each.split(',')]
         for name, func, params in infofile[self.dbname][target_table]:
             if option == 'scrambled':
                 element = _line[table2cols[target_table].index(name)]
