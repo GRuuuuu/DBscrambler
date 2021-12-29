@@ -196,8 +196,8 @@ class DBScramble:
         return '\'' + id + '\''
 
     def split_insert(self, line):
-        inQuotes = 0;  # in Quotes=1, not in Quotes=0
-        isEscape = 0;  # escaped character=1, nomal character=0
+        inQuotes = 0  # in Quotes=1, not in Quotes=0
+        isEscape = 0  # escaped character=1, nomal character=0
 
         lst = []
         #array = []
@@ -223,7 +223,7 @@ class DBScramble:
                     isEscape = 0
                 column+=a
         lst.append(column)
-        print(lst)
+        # print(lst)
         return lst
 
     # convert job in line
@@ -234,41 +234,43 @@ class DBScramble:
         # _line = re.split(r"(?:^|,)(\"(?:[^\"]+|\"\")*\"|[^,]*)", _line[0])
         # _line = re.split(r"/'[^/']*/'|[^,]+",_line[0])
         _line = self.split_insert(_line[0])
+        _line_blank = _line.copy()
         for name, func, params in infofile[self.dbname][target_table]:
-            if option == 'scrambled':
-                element = _line[table2cols[target_table].index(name)]
-                if params is None:
-                    if func in ['phone_withdash', 'phone_nodash']:
-                        front_3digit = element[1:4]
-                        if element.lower() not in ['null'] and element.strip('\'') not in ['Removed', '']:
-                            _line[table2cols[target_table].index(name)] = eval('self.' + func)(front_3digit)
-                    else:
-                        if element.lower() not in ['null'] and element.strip('\'') not in ['Removed', '']:
-                            _line[table2cols[target_table].index(name)] = eval('self.' + func)()
-                elif func == 'rand_element':
+            # if option == 'scrambled':
+            element = _line[table2cols[target_table].index(name)]
+            if params is None:
+                if func in ['phone_withdash', 'phone_nodash']:
+                    front_3digit = element[1:4]
                     if element.lower() not in ['null'] and element.strip('\'') not in ['Removed', '']:
-                        _line[table2cols[target_table].index(name)] = eval('self.' + func)(params[0]['object'])
-                elif func == 'random_address':
-                    fullAdr = self.zipcode_kr.readline()
-                    if fullAdr is None:
-                        self.zipcode_kr = open(zipcode_path)
-                        fullAdr = self.zipcode_kr.readline()
-                    address = fullAdr.split('|')
-                    for each in params:
-                        _element = _line[table2cols[target_table].index(each['column'])]
-                        if _element.lower() not in ['null'] and _element.strip('\'') not in ['Removed', '']:
-                            _line[table2cols[target_table].index(each['column'])] = eval('self.' + each['cvt_option'])(
-                                address)
+                        _line[table2cols[target_table].index(name)] = eval('self.' + func)(front_3digit)
                 else:
-                    _params = {}
-                    for each in params:
-                        _params.update(each)
                     if element.lower() not in ['null'] and element.strip('\'') not in ['Removed', '']:
-                        _line[table2cols[target_table].index(name)] = eval('self.' + func)(**_params)
-            elif option == 'blank':
-                _line[table2cols[target_table].index(name)] = ''
+                        _line[table2cols[target_table].index(name)] = eval('self.' + func)()
+            elif func == 'rand_element':
+                if element.lower() not in ['null'] and element.strip('\'') not in ['Removed', '']:
+                    _line[table2cols[target_table].index(name)] = eval('self.' + func)(params[0]['object'])
+            elif func == 'random_address':
+                fullAdr = self.zipcode_kr.readline()
+                if fullAdr is None:
+                    self.zipcode_kr = open(zipcode_path)
+                    fullAdr = self.zipcode_kr.readline()
+                address = fullAdr.split('|')
+                for each in params:
+                    _element = _line[table2cols[target_table].index(each['column'])]
+                    if _element.lower() not in ['null'] and _element.strip('\'') not in ['Removed', '']:
+                        _line[table2cols[target_table].index(each['column'])] = eval('self.' + each['cvt_option'])(
+                            address)
+            else:
+                _params = {}
+                for each in params:
+                    _params.update(each)
+                if element.lower() not in ['null'] and element.strip('\'') not in ['Removed', '']:
+                    _line[table2cols[target_table].index(name)] = eval('self.' + func)(**_params)
+            # elif option == 'blank':
+            _line_blank[table2cols[target_table].index(name)] = ''
         _line = '(' + ','.join(_line) + ')'
-        return _line
+        _line_blank = '(' + ','.join(_line_blank) + ')'
+        return _line,_line_blank
 
     # parsing via line-by-line
     def parse(self):
@@ -303,8 +305,8 @@ class DBScramble:
                 elif self.state == "insert table":
                     l = re.findall("\((.+)\)", line)
                     if l:
-                        _line_scrambled = self.convert(l, self.infofile, target_table, table2cols, option='scrambled')
-                        _line_blank = self.convert(l, self.infofile, target_table, table2cols, option='blank')
+                        _line_scrambled, _line_blank = self.convert(l, self.infofile, target_table, table2cols, option='scrambled')
+                        # _line_blank = self.convert(l, self.infofile, target_table, table2cols, option='blank')
                         if line.endswith(';\n'):
                             self.set_state("none")
                             out_scrambled.write(_line_scrambled + ';\n')
