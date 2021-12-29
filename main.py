@@ -52,7 +52,12 @@ class DBScramble:
 
     # random email 리턴
     def fake_email(self):
-        return '\'' + self.faker_en.email() + '\''
+        string_set = ''
+        string_set += string.ascii_lowercase
+        string_set += string.ascii_uppercase
+        id = ''.join(random.sample(string_set,random.randint(5,10)))
+        domain = random.choice(['naver.com','daum.net','nate.com','kakao.com','gmail.com','outlook.com','icloud.com'])
+        return '\'' + id+'@'+domain + '\''
 
     # random ip 리턴
     def fake_ip(self):
