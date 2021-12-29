@@ -55,7 +55,7 @@ class DBScramble:
         string_set = ''
         string_set += string.ascii_lowercase
         string_set += string.ascii_uppercase
-        id = ''.join(random.sample(string_set,random.randint(5,10)))
+        id = ''.join(random.sample(string_set,random.randint(12,14)))
         domain = random.choice(['naver.com','daum.net','nate.com','kakao.com','gmail.com','outlook.com','icloud.com'])
         return '\'' + id+'@'+domain + '\''
 
