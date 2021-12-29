@@ -11,7 +11,8 @@ adr_meta = ['ZIP_NO', 'SIDO', 'SIDO_ENG', 'SIGUNGU', 'SIGUNGU_ENG', 'EUPMYUN', '
             'DORO_CD', 'DORO', 'DORO_ENG', 'UNDERGROUNT_YN', 'BUILD_NO1', 'BUILD_NO2', "BUILD_NO_MANAGE_NO",
             'DARYANG_NM', 'BUILD_NM', 'DONG_CD', 'DONG_NM', 'RI', 'H_DONG_NM', 'SAN_YN', 'ZIBUN1',
             'EUPMYUN_DONG_SN', 'ZIBUN2', 'ZIP_NO_OLD', 'ZIP_SN']
-zipcode_path='random_zipcodeKR.txt'
+zipcode_path = 'random_zipcodeKR.txt'
+
 
 class DBScramble:
     def __init__(self,
@@ -28,6 +29,7 @@ class DBScramble:
         self.zipcode_kr = open(zipcode_path)
         self.faker_en = Faker()
         self.faker_kr = Faker('ko-KR')
+        self.korean_unicode = list(range(0xAC00, 0xD7A4))
 
     # yml 로딩 후 function 콜하기 쉽게 반화
     def load_yaml(self, infofile):
@@ -39,8 +41,8 @@ class DBScramble:
                 item['name']: [(details['column'], details['cvt_option'],
                                 details['params'] if 'params' in details.keys() else None)
                                for details in item['object_list']]
-                            for item in db['tables']}
-                        for db in infofile['dbs']
+                for item in db['tables']}
+            for db in infofile['dbs']
         }
         return infofile
 
@@ -58,7 +60,11 @@ class DBScramble:
 
     # korean name generator를 통해 random name 리턴
     def korean_name(self):
-        return '\'' + random.choice([namer.generate(True), namer.generate(False)]) + '\''
+        name = ''
+        for _ in range(3):
+            name += chr(random.choice(self.korean_unicode))
+        return '\'' + name + '\''
+        # return '\'' + random.choice([namer.generate(True), namer.generate(False)]) + '\''
 
     # names 모듈을 통해 영어 랜덤 이름 리턴
     def english_name(self):
@@ -68,10 +74,11 @@ class DBScramble:
     def phone_withdash(self, front_3dgits):
         if front_3dgits.startswith('02'):
             return '\'' + '02' + "-" + str(random.randint(0, 9999)).zfill(4) + "-" + str(random.randint(0, 9999)).zfill(
-            4) + '\''
+                4) + '\''
         else:
-            return '\'' + front_3dgits + "-" + str(random.randint(0, 9999)).zfill(4) + "-" + str(random.randint(0, 9999)).zfill(
-            4) + '\''
+            return '\'' + front_3dgits + "-" + str(random.randint(0, 9999)).zfill(4) + "-" + str(
+                random.randint(0, 9999)).zfill(
+                4) + '\''
 
     # 전화번호 대쉬가 없는 경우의 랜덤 리턴
     def phone_nodash(self, front_3dgits):
@@ -91,8 +98,12 @@ class DBScramble:
             string_set += string.ascii_lowercase
         if 'en_uppercase' in params['object']:
             string_set += string.ascii_uppercase
+        if 'kr' in params['object']:
+            for each in random.sample(self.korean_unicode,30):
+                string_set += chr(each)
         if 'symbol' in params['object']:
-            string_set += string.punctuation.replace('\'', '')
+            string_set += string.punctuation.replace('\'', '').replace('\\','')
+            # string_set += string.punctuation.replace('\\', '')
         if 'blank' in params['object']:
             string_set += ' '
         ret = '\'' + ''.join(random.choice(string_set) for _ in range(params['length'])) + '\''
@@ -103,7 +114,7 @@ class DBScramble:
 
     # params에서 정해진 스트링 리턴
     def set_string(self, **params):
-        string='\'' + params['string'] + '\''
+        string = '\'' + params['string'] + '\''
         return string
 
     # Faker를 통해 랜덤 한국 주소 리턴
@@ -160,7 +171,8 @@ class DBScramble:
 
     # 읽어드린 address 라인에서 상세주소(건물이름+법정동이름) 리턴
     def kr_doro_detail(self, address):
-        ret = address[adr_meta.index('BUILD_NM')] + ' ' + address[adr_meta.index('DONG_NM')] + ' ' + str(random.randint(1, 20))+ '층'
+        ret = address[adr_meta.index('BUILD_NM')] + ' ' + address[adr_meta.index('DONG_NM')] + ' ' + str(
+            random.randint(1, 20)) + '층'
         return '\'' + ret.strip() + '\''
 
     # 규칙에 맞게 한국 랜덤 주민번호 리턴
@@ -188,26 +200,30 @@ class DBScramble:
         isEscape = 0;  # escaped character=1, nomal character=0
 
         lst = []
-        array = []
+        #array = []
+        column = ''
         for a in line:
-            # print(a)
             if a == ',' and inQuotes == 0:
-                lst.append("".join(array))
-                array.clear()
+                lst.append(column)
+                column = ''
             elif a == '\'' and inQuotes == 0 and isEscape == 0:
-                array.append(a)
+                column+=a
                 inQuotes = 1
             elif a == '\'' and inQuotes == 1 and isEscape == 0:
-                array.append(a)
+                column+=a
                 inQuotes = 0
             elif a == '\\':
-                array.append(a)
-                isEscape = 1
+                column+=a
+                if isEscape ==1:
+                    isEscape=0
+                else:
+                    isEscape = 1
             else:
                 if isEscape == 1:
                     isEscape = 0
-                array.append(a)
-        lst.append("".join(array))
+                column+=a
+        lst.append(column)
+        print(lst)
         return lst
 
     # convert job in line
@@ -222,7 +238,7 @@ class DBScramble:
             if option == 'scrambled':
                 element = _line[table2cols[target_table].index(name)]
                 if params is None:
-                    if func in ['phone_withdash','phone_nodash']:
+                    if func in ['phone_withdash', 'phone_nodash']:
                         front_3digit = element[1:4]
                         if element.lower() not in ['null'] and element.strip('\'') not in ['Removed', '']:
                             _line[table2cols[target_table].index(name)] = eval('self.' + func)(front_3digit)
@@ -231,7 +247,7 @@ class DBScramble:
                             _line[table2cols[target_table].index(name)] = eval('self.' + func)()
                 elif func == 'rand_element':
                     if element.lower() not in ['null'] and element.strip('\'') not in ['Removed', '']:
-                        _line[table2cols[target_table].index(name)] = eval('self.'+func)(params[0]['object'])
+                        _line[table2cols[target_table].index(name)] = eval('self.' + func)(params[0]['object'])
                 elif func == 'random_address':
                     fullAdr = self.zipcode_kr.readline()
                     if fullAdr is None:
@@ -241,7 +257,8 @@ class DBScramble:
                     for each in params:
                         _element = _line[table2cols[target_table].index(each['column'])]
                         if _element.lower() not in ['null'] and _element.strip('\'') not in ['Removed', '']:
-                            _line[table2cols[target_table].index(each['column'])] = eval('self.' + each['cvt_option'])(address)
+                            _line[table2cols[target_table].index(each['column'])] = eval('self.' + each['cvt_option'])(
+                                address)
                 else:
                     _params = {}
                     for each in params:

@@ -55,6 +55,7 @@ dbs:
                     - en_upeercase
                     - symbol
                     - blank
+                    - kr
                 - length: 14
             - column: emp
               cvt_option: random_string
