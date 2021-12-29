@@ -262,6 +262,7 @@ class DBScramble:
                 address = fullAdr.split('|')
                 for each in params:
                     _element = _line[table2cols[target_table].index(each['column'])]
+                    _line_blank[table2cols[target_table].index(each['column'])] = ''
                     if _element.lower() not in ['null'] and _element.strip('\'') not in ['Removed', '']:
                         _line[table2cols[target_table].index(each['column'])] = eval('self.' + each['cvt_option'])(
                             address)
