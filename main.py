@@ -157,24 +157,24 @@ class DBScramble:
         yymmdd = str(random_date.year) + str(random_date.month).zfill(2) + str(random_date.day).zfill(2)
         return '\'' + yymmdd + '\''
 
-    # nice no 10000~99999로 랜덤 리턴
+    # nice no 11자리 랜덤 리턴
     def rand_nice_no(self):
-        return str(random.randint(10000, 99999))
+        return str(random.randint(10000000000, 99999999999))
 
     # 리스트 형태 lst에서 랜덤 리턴
     def rand_element(self, lst):
         return '\'' + random.choice(lst) + '\''
 
-    # 읽어드린 address 라인에서 우편번호 리턴
+    # 읽어들인 address 라인에서 우편번호 리턴
     def kr_zipcode(self, address):
         return '\'' + address[adr_meta.index('ZIP_NO')] + '\''
 
-    # 읽어드린 address 라인에서 도로명 주소(시도+시군구+도로) 리턴
+    # 읽어들인 address 라인에서 도로명 주소(시도+시군구+도로) 리턴
     def kr_doro(self, address):
         return '\'' + address[adr_meta.index('SIDO')] + ' ' + address[adr_meta.index('SIGUNGU')] + ' ' + address[
             adr_meta.index('DORO')] + '\''
 
-    # 읽어드린 address 라인에서 상세주소(건물이름+법정동이름) 리턴
+    # 읽어들인 address 라인에서 상세주소(건물이름+법정동이름) 리턴
     def kr_doro_detail(self, address):
         ret = address[adr_meta.index('BUILD_NM')] + ' ' + address[adr_meta.index('DONG_NM')] + ' ' + str(
             random.randint(1, 20)) + '층'
