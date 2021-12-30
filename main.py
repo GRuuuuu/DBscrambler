@@ -167,9 +167,9 @@ class DBScramble:
         yymmdd = str(random_date.year) + str(random_date.month).zfill(2) + str(random_date.day).zfill(2)
         return '\'' + yymmdd + '\''
 
-    # nice no 11자리 랜덤 리턴
+    # nice no INT random 리턴
     def rand_nice_no(self):
-        return str(random.randint(10000000000, 99999999999))
+        return str(random.randint(1, 2147483647))
 
     # 리스트 형태 lst에서 랜덤 리턴
     def rand_element(self, lst):
