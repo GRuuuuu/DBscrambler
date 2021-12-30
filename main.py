@@ -55,9 +55,10 @@ class DBScramble:
         string_set = ''
         string_set += string.ascii_lowercase
         string_set += string.ascii_uppercase
-        id = ''.join(random.sample(string_set,random.randint(12,14)))
-        domain = random.choice(['naver.com','daum.net','nate.com','kakao.com','gmail.com','outlook.com','icloud.com'])
-        return '\'' + id+'@'+domain + '\''
+        id = ''.join(random.sample(string_set, random.randint(12, 14)))
+        domain = random.choice(
+            ['naver.com', 'daum.net', 'nate.com', 'kakao.com', 'gmail.com', 'outlook.com', 'icloud.com'])
+        return '\'' + id + '@' + domain + '\''
 
     # random ip 리턴
     def fake_ip(self):
@@ -77,12 +78,12 @@ class DBScramble:
 
     # 전화번호 대쉬가 있는 경우의 랜덤 리턴
     def phone_withdash(self, front_3dgits):
-        if front_3dgits.startswith('0\''):
-            return '\'' + "010" + "-" + str(random.randint(0, 9999)).zfill(4) + "-" + str(
-                random.randint(0, 9999)).zfill(
-                4) + '\''
         if front_3dgits.startswith('02'):
             return '\'' + '02' + "-" + str(random.randint(0, 9999)).zfill(4) + "-" + str(random.randint(0, 9999)).zfill(
+                4) + '\''
+        elif len(front_3dgits) <= 2:
+            return '\'' + "010" + "-" + str(random.randint(0, 9999)).zfill(4) + "-" + str(
+                random.randint(0, 9999)).zfill(
                 4) + '\''
         else:
             return '\'' + front_3dgits + "-" + str(random.randint(0, 9999)).zfill(4) + "-" + str(
@@ -91,12 +92,13 @@ class DBScramble:
 
     # 전화번호 대쉬가 없는 경우의 랜덤 리턴
     def phone_nodash(self, front_3dgits):
-        if front_3dgits.startswith('0\''):
-            return '\'' + "010" + str(random.randint(0, 9999)).zfill(4) + str(
-                random.randint(0, 9999)).zfill(
-                4) + '\''
+
         if front_3dgits.startswith('02'):
             return '\'' + '02' + str(random.randint(0, 9999)).zfill(4) + str(random.randint(0, 9999)).zfill(
+                4) + '\''
+        elif len(front_3dgits) <= 2:
+            return '\'' + "010" + str(random.randint(0, 9999)).zfill(4) + str(
+                random.randint(0, 9999)).zfill(
                 4) + '\''
         else:
             return '\'' + front_3dgits + str(random.randint(0, 9999)).zfill(4) + str(random.randint(0, 9999)).zfill(
@@ -112,10 +114,10 @@ class DBScramble:
         if 'en_uppercase' in params['object']:
             string_set += string.ascii_uppercase
         if 'kr' in params['object']:
-            for each in random.sample(self.korean_unicode,30):
+            for each in random.sample(self.korean_unicode, 30):
                 string_set += chr(each)
         if 'symbol' in params['object']:
-            string_set += string.punctuation.replace('\'', '').replace('\\','')
+            string_set += string.punctuation.replace('\'', '').replace('\\', '')
             # string_set += string.punctuation.replace('\\', '')
         if 'blank' in params['object']:
             string_set += ' '
@@ -213,28 +215,28 @@ class DBScramble:
         isEscape = 0  # escaped character=1, nomal character=0
 
         lst = []
-        #array = []
+        # array = []
         column = ''
         for a in line:
             if a == ',' and inQuotes == 0:
                 lst.append(column)
                 column = ''
             elif a == '\'' and inQuotes == 0 and isEscape == 0:
-                column+=a
+                column += a
                 inQuotes = 1
             elif a == '\'' and inQuotes == 1 and isEscape == 0:
-                column+=a
+                column += a
                 inQuotes = 0
             elif a == '\\':
-                column+=a
-                if isEscape ==1:
-                    isEscape=0
+                column += a
+                if isEscape == 1:
+                    isEscape = 0
                 else:
                     isEscape = 1
             else:
                 if isEscape == 1:
                     isEscape = 0
-                column+=a
+                column += a
         lst.append(column)
         # print(lst)
         return lst
@@ -253,7 +255,7 @@ class DBScramble:
             element = _line[table2cols[target_table].index(name)]
             if params is None:
                 if func in ['phone_withdash', 'phone_nodash']:
-                    front_3digit = element[1:4]
+                    front_3digit = element.strip('\'')[0:3]
                     if element.lower() not in ['null'] and element.strip('\'') not in ['Removed', '']:
                         _line[table2cols[target_table].index(name)] = eval('self.' + func)(front_3digit)
                 else:
@@ -284,7 +286,7 @@ class DBScramble:
             _line_blank[table2cols[target_table].index(name)] = ''
         _line = '(' + ','.join(_line) + ')'
         _line_blank = '(' + ','.join(_line_blank) + ')'
-        return _line,_line_blank
+        return _line, _line_blank
 
     # parsing via line-by-line
     def parse(self):
@@ -319,7 +321,8 @@ class DBScramble:
                 elif self.state == "insert table":
                     l = re.findall("\((.+)\)", line)
                     if l:
-                        _line_scrambled, _line_blank = self.convert(l, self.infofile, target_table, table2cols, option='scrambled')
+                        _line_scrambled, _line_blank = self.convert(l, self.infofile, target_table, table2cols,
+                                                                    option='scrambled')
                         # _line_blank = self.convert(l, self.infofile, target_table, table2cols, option='blank')
                         if line.endswith(';\n'):
                             self.set_state("none")
