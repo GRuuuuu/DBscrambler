@@ -77,6 +77,10 @@ class DBScramble:
 
     # 전화번호 대쉬가 있는 경우의 랜덤 리턴
     def phone_withdash(self, front_3dgits):
+        if front_3dgits.startswith('0\''):
+            return '\'' + "010" + "-" + str(random.randint(0, 9999)).zfill(4) + "-" + str(
+                random.randint(0, 9999)).zfill(
+                4) + '\''
         if front_3dgits.startswith('02'):
             return '\'' + '02' + "-" + str(random.randint(0, 9999)).zfill(4) + "-" + str(random.randint(0, 9999)).zfill(
                 4) + '\''
@@ -87,6 +91,10 @@ class DBScramble:
 
     # 전화번호 대쉬가 없는 경우의 랜덤 리턴
     def phone_nodash(self, front_3dgits):
+        if front_3dgits.startswith('0\''):
+            return '\'' + "010" + str(random.randint(0, 9999)).zfill(4) + str(
+                random.randint(0, 9999)).zfill(
+                4) + '\''
         if front_3dgits.startswith('02'):
             return '\'' + '02' + str(random.randint(0, 9999)).zfill(4) + str(random.randint(0, 9999)).zfill(
                 4) + '\''
