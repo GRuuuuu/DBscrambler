@@ -30,9 +30,10 @@ class DBPrimaryCheck:
             for line in f:
                 if self.state == "none":
                     if line.strip().lower().startswith('create table'):
-                        if line.strip().endswith(';'):
+                        table = re.findall('\`.*?\`', line)
+                        if not table:
                             continue
-                        self.set_table(re.findall('\`.*?\`', line)[0].strip('`'))
+                        self.set_table(table[0].strip('`'))
                         self.set_state('create_table')
                         table_info[self.table] = {'col': [], 'primary_key': [], 'unique_key':[]}
                 elif self.state == "create_table":
