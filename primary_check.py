@@ -21,7 +21,8 @@ class DBPrimaryCheck:
         yml_info = dict()
         for each in yml_dict['dbs']:
             for x in each['tables']:
-                yml_info[x['name']]={'col':[ e['column'] for e in x['object_list']]}
+                yml_info[x['name']]={'col':[ [e['column']] if e['cvt_option']!='random_address' else [x['column'] for x in e['params']] for e in x['object_list']]}
+                yml_info[x['name']]['col'] = [item for sublist in yml_info[x['name']]['col'] for item in sublist]
         return yml_info
 
     def primary_check(self):
@@ -37,6 +38,8 @@ class DBPrimaryCheck:
                         self.set_state('create_table')
                         table_info[self.table] = {'col': [], 'primary_key': [], 'unique_key':[]}
                 elif self.state == "create_table":
+                    if line.strip().lower().startswith('create table'):
+                        continue
                     if line.strip().lower().startswith('`'):
                         col = re.findall('\`.*?\`', line)[0].strip('`')
                         table_info[self.table]['col'].append(col)
