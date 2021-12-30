@@ -28,7 +28,7 @@ class PIfinder:
                                 lst.append('name')
                             if re.search('휴대폰|전화|phone|연락처',com.group(1)) is not None:
                                 lst.append('phone')
-                            if re.search('이메일|mail',com.group(1)) is not None:
+                            if re.search('메일|이메일|mail',com.group(1)) is not None:
                                 lst.append('email')
                             if re.search('주소|도로|우편|post',com.group(1)) is not None:
                                 lst.append('post')
@@ -38,9 +38,14 @@ class PIfinder:
                                 lst.append('rrn')
                             if re.search('계좌|account',com.group(1)) is not None:
                                 lst.append('acount')
+                            if re.search('아이디|ID|id|패스워드|비밀|PW|PSWD',com.group(1)) is not None:
+                                lst.append('id/pw')
+                            if re.search('아이피|ip|IP',com.group(1)) is not None:
+                                lst.append('ip')
                             if lst:
-                                print(col.group(1)+" - "+str(lst))
+                                print(col.group(1)+":"com.group(1)+" - "+str(lst))
                     if line.strip().endswith(';'):
+                        print("")
                         state = 0
 
 parser = argparse.ArgumentParser(description='find personal information in sqldump file')
