@@ -52,6 +52,8 @@ class DBPrimaryCheck:
         for key, val in yml_info.items():
             yml_info[key]['col_primary_key'] =list(set(table_info[key]['primary_key']).intersection(set(val['col'])))
             yml_info[key]['col_unique_key'] = list(set(table_info[key]['unique_key']).intersection(set(val['col'])))
+            yml_info[key]['col_non_exist'] = list(set(val['col'])-set(table_info[key]['col']))
+            yml_info[key].pop('col')
 
 
         return yml_info
@@ -65,4 +67,4 @@ args = parser.parse_args()
 pc = DBPrimaryCheck(dumpfile=args.dumpfile,
                     ymlfile=args.ymlfile)
 yml_info = pc.primary_check()
-print(yml_info)
+print(yaml.dump(yml_info))
