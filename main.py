@@ -169,7 +169,7 @@ class DBScramble:
 
     # nice no INT random 리턴
     def rand_nice_no(self):
-        return str(random.randint(1, 2147483647))
+        return str(random.randint(1, 2147483646))
 
     # 리스트 형태 lst에서 랜덤 리턴
     def rand_element(self, lst):
