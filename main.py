@@ -4,7 +4,6 @@ import datetime
 from korean_name_generator import namer
 from faker import Faker
 import argparse
-import names
 import string
 
 adr_meta = ['ZIP_NO', 'SIDO', 'SIDO_ENG', 'SIGUNGU', 'SIGUNGU_ENG', 'EUPMYUN', 'EUPMYUN_ENG',
@@ -71,10 +70,6 @@ class DBScramble:
             name += chr(random.choice(self.korean_unicode))
         return '\'' + name + '\''
         # return '\'' + random.choice([namer.generate(True), namer.generate(False)]) + '\''
-
-    # names 모듈을 통해 영어 랜덤 이름 리턴
-    def english_name(self):
-        return '\'' + names.get_full_name() + '\''
 
     # 전화번호 대쉬가 있는 경우의 랜덤 리턴
     def phone_withdash(self, front_3dgits):
