@@ -1,7 +1,6 @@
 import re
 import random
 import datetime
-from korean_name_generator import namer
 from faker import Faker
 import argparse
 import string
@@ -10,7 +9,7 @@ adr_meta = ['ZIP_NO', 'SIDO', 'SIDO_ENG', 'SIGUNGU', 'SIGUNGU_ENG', 'EUPMYUN', '
             'DORO_CD', 'DORO', 'DORO_ENG', 'UNDERGROUNT_YN', 'BUILD_NO1', 'BUILD_NO2', "BUILD_NO_MANAGE_NO",
             'DARYANG_NM', 'BUILD_NM', 'DONG_CD', 'DONG_NM', 'RI', 'H_DONG_NM', 'SAN_YN', 'ZIBUN1',
             'EUPMYUN_DONG_SN', 'ZIBUN2', 'ZIP_NO_OLD', 'ZIP_SN']
-zipcode_path = 'random_zipcodeKR.txt'
+zipcode_path = '../random_zipcodeKR.txt'
 
 
 class DBScramble:
@@ -69,7 +68,6 @@ class DBScramble:
         for _ in range(3):
             name += chr(random.choice(self.korean_unicode))
         return '\'' + name + '\''
-        # return '\'' + random.choice([namer.generate(True), namer.generate(False)]) + '\''
 
     # 전화번호 대쉬가 있는 경우의 랜덤 리턴
     def phone_withdash(self, front_3dgits):
@@ -233,16 +231,10 @@ class DBScramble:
                     isEscape = 0
                 column += a
         lst.append(column)
-        # print(lst)
         return lst
 
     # convert job in line
     def convert(self, _line, infofile, target_table, table2cols, option):
-        # _line = _line[0].split(',')
-        # _line = [ele for each in re.split(r',(?=\')', _line[0]) for ele in each.split(',')]
-        # _line = re.split(r",(?=(?:[^\']*\'[^\']*\')*[^\']*$)", _line[0])
-        # _line = re.split(r"(?:^|,)(\"(?:[^\"]+|\"\")*\"|[^,]*)", _line[0])
-        # _line = re.split(r"/'[^/']*/'|[^,]+",_line[0])
         _line = self.split_insert(_line[0])
         _line_blank = _line.copy()
         for name, func, params in infofile[self.dbname][target_table]:
@@ -336,17 +328,3 @@ class DBScramble:
                             out_blank.write(line)
         out_scrambled.close()
         out_blank.close()
-
-
-parser = argparse.ArgumentParser(description='convert or validate sqldump file')
-parser.add_argument('--file', type=str, default=None)
-parser.add_argument('--input', type=str, default=None)
-parser.add_argument('--output_scrambled', type=str, default=None)
-parser.add_argument('--output_blank', type=str, default=None)
-args = parser.parse_args()
-
-masker = DBScramble(dumpfile=args.input,
-                    infofile=args.file,
-                    outfile_scrambled=args.output_scrambled,
-                    outfile_blank=args.output_blank)
-masker.parse()

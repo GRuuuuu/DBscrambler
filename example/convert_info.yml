@@ -6,7 +6,7 @@ dbs:
       - name: sample_table1
         object_list:
             - column: name
-              cvt_option: english_name
+              cvt_option: korean_name
             - column: email
               cvt_option: fake_email
             - column: phone
@@ -81,17 +81,3 @@ dbs:
                 - object:
                     - '1'
                     - '0'
-  - name: testdb2
-    tables:
-      - name: sample_table1
-        object_list:
-            - column: name
-              cvt_option: english_name
-            - column: email
-              cvt_option: fake_email
-            - column: phone
-              cvt_option: phone_nodash
-            - column: address
-              cvt_option: fake_kor_address
-            - column: ip
-              cvt_option: fake_ip

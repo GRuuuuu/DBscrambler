@@ -59,15 +59,4 @@ class DBPrimaryCheck:
             yml_info[key].pop('col')
 
 
-        return yml_info
-
-
-parser = argparse.ArgumentParser(description='convert or validate sqldump file')
-parser.add_argument('--dumpfile', type=str, default='test_dump.sql')
-parser.add_argument('--ymlfile', type=str, default='convert_info.yml')
-args = parser.parse_args()
-
-pc = DBPrimaryCheck(dumpfile=args.dumpfile,
-                    ymlfile=args.ymlfile)
-yml_info = pc.primary_check()
-print(yaml.dump(yml_info))
+        return yaml.dump(yml_info)
