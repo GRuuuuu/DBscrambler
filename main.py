@@ -19,7 +19,7 @@ def parse(orig, parsed):
 @click.option('--yaml',default=None, type=click.Path(exists=True), help='add metadata-yaml file to the commands to provide information on how to scramble')
 @click.option('--output_scrambled',default=None,help='filepath where scrambled sql dump file is stored')
 @click.option('--output_blank',default=None,help='filepath where scrambled data erased sql dump file is stored')
-def dbscramb(file,yaml,output_scrambled,output_blank):
+def scramble(file,yaml,output_scrambled,output_blank):
     masker = scramb.DBScramble(dumpfile=file,
                                 infofile=yaml,
                                 outfile_scrambled=output_scrambled,
@@ -46,6 +46,6 @@ def valid(sql,result):
 
 cli.add_command(parse)
 cli.add_command(prechk)
-cli.add_command(dbscramb)
+cli.add_command(scramble)
 cli.add_command(valid)
 cli()
