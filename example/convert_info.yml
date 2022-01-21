@@ -12,7 +12,10 @@ dbs:
             - column: phone
               cvt_option: phone_nodash
             - column: address
-              cvt_option: fake_kor_address
+              cvt_option: random_address
+              params:
+                  - column: address
+                    cvt_option: kr_doro
             - column: ip
               cvt_option: fake_ip
       - name: sample_table2
@@ -24,7 +27,10 @@ dbs:
             - column: rid
               cvt_option: korean_rid
             - column: address
-              cvt_option: fake_kor_address
+              cvt_option: random_address
+              params:
+                  - column: address
+                    cvt_option: kr_doro
             - column: birth
               cvt_option: fake_birth
       - name: sample_table3
@@ -45,14 +51,19 @@ dbs:
                   - column: main_dtl_address
                     cvt_option: kr_doro_detail
             - column: account
-              cvt_option: fake_account
+              cvt_option: random_string
+              params:
+                - object:
+                    - digit
+                    - en_lowercase
+                - length: 7
             - column: member
               cvt_option: random_string
               params:
                 - object:
                     - digit
                     - en_lowercase
-                    - en_upeercase
+                    - en_uppercase
                     - symbol
                     - blank
                     - kr
@@ -66,9 +77,9 @@ dbs:
             - column: memo
               cvt_option: set_string
               params:
-                - string: "S2bDzun9lauk+JzbEvydLKphVi/l1Jq3QaLokfcHBTvV/AmjCJanpKRPXLfnQ52JjMz/xlsycS5D5spZGv0Sw=="
+                - string: "hololy"
             - column: nice_no
-              cvt_option: rand_nice_no
+              cvt_option: rand_int
             - column: gd
               cvt_option: rand_element
               params:

@@ -125,30 +125,6 @@ class DBScramble:
         string = '\'' + params['string'] + '\''
         return string
 
-    # Faker를 통해 랜덤 한국 주소 리턴
-    def fake_kor_address(self):
-        # fake = Faker('ko-KR')
-        return '\'' + self.faker_kr.address() + '\''
-
-    # Faker를 통해 랜덤 한국 우편번호 리턴
-    def fake_kor_zipcode(self):
-        # fake = Faker('ko-KR')
-        return '\'' + self.faker_kr.postcode() + '\''
-
-    # Faker를 통해 랜덤 미국 주소 리턴
-    def fake_eng_address(self):
-        # fake = Faker()
-        return '\'' + self.faker_en.address() + '\''
-
-    # Faker를 통해 랜덤 미국 우편번호 리턴
-    def fake_eng_zipcode(self):
-        # fake = Faker()
-        return '\'' + self.faker_en.postcode() + '\''
-
-    # Faker를 통해 숫자, 소문자 포함 10자리 랜덤 리턴
-    def fake_account(self):
-        return '\'' + ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(10)) + '\''
-
     # 출생연월 yymmdd 형태로 랜덤 리턴
     def fake_birth(self):
         start_date = datetime.date(1900, 1, 1)
@@ -160,8 +136,8 @@ class DBScramble:
         yymmdd = str(random_date.year) + str(random_date.month).zfill(2) + str(random_date.day).zfill(2)
         return '\'' + yymmdd + '\''
 
-    # nice no INT random 리턴
-    def rand_nice_no(self):
+    # INT random 리턴
+    def rand_int(self):
         return str(random.randint(1, 2147483646))
 
     # 리스트 형태 lst에서 랜덤 리턴
